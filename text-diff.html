@@ -1,0 +1,91 @@
+<!--
+  Version 1.0.0
+  July 2025
+-->
+<script type="text/javascript">
+    RED.nodes.registerType('Omrid01_textDiff',{
+        paletteLabel:'text diff',
+		category: 'function',
+        color: 'lightpink',
+        defaults: {
+            name: 		{value:""},
+            diffMode: 	{value:"L"},
+ 			caseSensitive: {value: false},
+ 			ignoreWS: {value: true}
+      },
+        inputs:1,
+        outputs:1,
+        icon: "diff.png",
+        label: function() {
+            return this.name||"text diff";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="Omrid01_textDiff">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	<div class="form-row" >
+		<label for="node-input-diffMode"><i class="fa fa-bars" aria-hidden="true"></i> Diff Mode</label>
+		<select id="node-input-diffMode">
+			<option value='L'>Lines (rows)</option>
+			<option value='W'>Words</option>
+			<option value='C'>Characters</option>
+		</select>
+    </div>
+	<div class="form-row">
+        <label for="node-input-caseSensitive"> Case Sensitive</label>
+        <input type="checkbox" checked value="true" id="node-input-caseSensitive" style="display: inline-block; width: auto; vertical-align: top;"/>
+    </div>
+	<div class="form-row">
+        <label for="node-input-ignoreWS"> Ignore White Spaces</label>
+        <input type="checkbox" checked value="true" id="node-input-ignoreWS" style="display: inline-block; width: auto; vertical-align: top;"/>
+    </div>	
+ </script>
+
+<script type="text/html" data-help-name="Omrid01_textDiff">
+    <p>Compares text blocks (by either lines or words). Finds added, changed &amp; removed text</p>
+	<h3><b>Input Arguments</b></h3>
+	<p>All input properties can be provided dynamically (in 
+	runtime) as message properties. Some arguments can also have default 
+	values configured in the node. Dynamic input arguments always 
+	override configured defaults</p>  
+	<dl class="message-properties">
+		<dt>Diff Mode <span class="property-type">selection</span></dt>
+		<dd>Determines if the comparison is done at <code>line</code> (row), <code>word</code> or <code>character</code> level.
+		 Can be overridden by the message property <code>msg.diffMode</code>, with a string value of <code>L</code>, <code>W</code> or <code>C</code>.</dd>
+		 
+		<dt>Case Sensitive <span class="property-type">checkbox</span></dt>
+		<dd>Determines if the text comparison should be case-sensitive.
+		 Can be overridden by the message property <code>msg.caseSensitive</code>, with a Bollean value of <code>true</code> or <code>false</code>.</dd>
+
+		<dt>Ignore Line White Spaces <span class="property-type">checkbox</span></dt>
+		<dd>Determines if to ignore white spaces (spaces, tabs etc.) in the comparison. Relevant only for line comparisons.
+		 Can be overridden by the message property <code>msg.ignoreWS</code>, with a Bollean value of <code>true</code> or <code>false</code>.</dd>
+
+		<dt>msg.oldText <span class="property-type">string</span></dt>
+		<dd>The original (old) text block, provided dynamically as a string property.</dd>
+		<dt>msg.newText <span class="property-type">string</span></dt>
+		<dd>The new text block (to be compared with the old text block), provided dynamically as a string property.</dd>
+	</dl>
+	<h3><b>Output</b></h3>
+	<dl class="message-properties">
+		<dt>msg.oldText  <span class="property-type">string</span></dt>
+		<dd>The old text block (as provided in input)</dd>
+		<dt>msg.newText  <span class="property-type">string</span></dt>
+		<dd>The new text block (as provided in input)</dd>
+		<dt>msg.oldArray  <span class="property-type">array</span></dt>
+		<dd>Array of lines, words or characters, tokenized from the old text block per the diff mode</dd>
+		<dt>msg.newArray  <span class="property-type">array</span></dt>
+		<dd>Array of lines, words or characters, tokenized from the new text block per the diff mode</dd>
+		<dt>msg.diffs  <span class="property-type">array</span></dt>
+		<dd>The diff results: array of diff objects, each including the properties:
+		<ul>
+		<li><code>diffType</code>: either <code>match</code>, <code>added</code> or <code>removed</code></li>
+		<li><code>oldIndex</code>, <code>newIndex</code>: the number (index) of the comapred line/word/character in the old &amp; new text blocks</li>
+		<li><code>oldStr</code>, <code>newStr</code>: the old &amp; new line/word/character which have been compared</li>
+		</ul></dd>
+	</dl>
+</script>

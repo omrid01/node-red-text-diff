@@ -1,0 +1,31 @@
+{
+	"name": "@omrid01/node-red-text-diff",
+	"version": "0.2.0",
+	"description": "Node for text diff, by line, word or character",
+    "dependencies": {},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": {
+		"name": "Omri Dayan",
+		"url": "https://github.com/omrid01"
+	},
+	"license": "ISC",
+	"keywords": ["Node-red","diff","LCS"],
+    "files": [
+        "nodes/*",
+		"examples/*"
+    ],
+    "dependencies": {},
+    "devDependencies": {},
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "node-red": {
+        "version": ">=3.0.0",
+        "nodes": {
+			"text_diff": "./text-diff.js"
+        }
+    }
+}
+
