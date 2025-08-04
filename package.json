@@ -11,10 +11,11 @@
 		"url": "https://github.com/omrid01"
 	},
 	"license": "ISC",
-	"keywords": ["Node-red","diff","LCS"],
+	"keywords": ["node-red","diff","LCS"],
     "files": [
         "nodes/*",
-		"examples/*"
+		"examples/*",
+		"resources/*"
     ],
     "dependencies": {},
     "devDependencies": {},
@@ -24,7 +25,7 @@
     "node-red": {
         "version": ">=3.0.0",
         "nodes": {
-			"text_diff": "./text-diff.js"
+			"text diff": "./nodes/text-diff.js"
         }
     }
 }
