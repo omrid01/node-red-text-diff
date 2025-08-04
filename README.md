@@ -1,5 +1,5 @@
-# text-diff
-**text-diff** is a custom Node-RED node, which compares text blocks (by either lines, words, characters etc.).<br>
+# text diff
+**text diff** is a custom Node-RED node, which compares text blocks (by either lines, words, characters etc.).<br>
 Complete reference to the node's functionality, input arguments and output results is provided in the node's on-line help, in the Node-RED editor.
 
 The node uses the **LCS** (Longest Common Subsequence) algorithm, to find added, changed &amp; removed text.<br>
