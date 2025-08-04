@@ -1,6 +1,6 @@
 {
 	"name": "@omrid01/node-red-text-diff",
-	"version": "0.2.0",
+	"version": "0.2.2",
 	"description": "Node for text diff, by line, word or character",
     "dependencies": {},
 	"scripts": {
