@@ -1,0 +1,364 @@
+[
+    {
+        "id": "48d23d183a5c88eb",
+        "type": "tab",
+        "label": "Diff",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dc9f2ed2556658f2",
+        "type": "group",
+        "z": "48d23d183a5c88eb",
+        "name": "Testing",
+        "style": {
+            "fill": "#ffefbf",
+            "fill-opacity": "0.2",
+            "label": true
+        },
+        "nodes": [
+            "9bcb4a5437428239",
+            "0560530c98a6c957",
+            "a9088564c77bbe73"
+        ],
+        "x": 54,
+        "y": 119,
+        "w": 172,
+        "h": 162
+    },
+    {
+        "id": "b7fd8a2cce8052cc",
+        "type": "ui-base",
+        "name": "ui",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-dropdown",
+            "ui-control",
+            "ui-text",
+            "ui-text-input"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 5,
+        "showDisconnectNotification": true,
+        "allowInstall": true
+    },
+    {
+        "id": "b7b1935fbb33bbc8",
+        "type": "ui-theme",
+        "name": "Default theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "d9993d7053343c5a",
+        "type": "ui-page",
+        "name": "Diff",
+        "ui": "b7fd8a2cce8052cc",
+        "path": "/diff",
+        "icon": "set-right",
+        "layout": "grid",
+        "theme": "b7b1935fbb33bbc8",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "8bd22dd1fce24d1d",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "d9993d7053343c5a",
+        "width": "11",
+        "height": "1",
+        "order": 1,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "76377f4edf6c9de2",
+        "type": "debug",
+        "z": "48d23d183a5c88eb",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "7686820782e9be0d",
+        "type": "function",
+        "z": "48d23d183a5c88eb",
+        "name": "Format Data",
+        "func": "const diffs = msg.diffs;\nlet formattedStr = '';\nconst tblData = [];\n\nswitch (msg.diffMode)\n{\n    case 'L':\n        for (let i = 0; i < diffs.length ; i++)\n        tblData.push({\n            diffType: diffs[i].diffType,\n            oldIndex: diffs[i].oldIndex,\n            newIndex: diffs[i].newIndex,\n            oldLine:  diffs[i].oldStr.replace(/ /g, '\\u00A0'),\n            newLine:  diffs[i].newStr.replace(/ /g, '\\u00A0')\n        });\n        msg.payload = tblData;\n        break;\n    //-------------------------------------\n    case 'W':\n    case 'C':\n        for (let i = 0; i < msg.diffs.length ; i++)\n        {\n            let spacer = ' ';\n            let oldStr = msg.diffs[i].oldStr;\n            let newStr = msg.diffs[i].newStr;\n\n            if (msg.diffMode === 'C')\n            {\n                const charFiller = '□';\n                spacer = '';\n                if (oldStr === ' ')\n                    oldStr = charFiller;\n                if (newStr === ' ')\n                    newStr = charFiller;        \n            }\n\n            switch (msg.diffs[i].diffType)\n            {\n                case \"match\":\n                    formattedStr += (newStr + spacer);\n                    break;\n                case \"added\":\n                    formattedStr += `<span style=\"color:green\">${newStr}${spacer}</span>`\n                    break;\n                case \"removed\":\n                    formattedStr += `<span style=\"color:red;text-decoration:line-through;\">${oldStr}${spacer}</span>`\n                    break;\n            }\n        }\n        msg.payload = formattedStr;\n        break;\n    default:\n        msg.payload = '';\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 200,
+        "wires": [
+            [
+                "05c6c9a2c74b0e76"
+            ]
+        ]
+    },
+    {
+        "id": "9bcb4a5437428239",
+        "type": "inject",
+        "z": "48d23d183a5c88eb",
+        "g": "dc9f2ed2556658f2",
+        "name": "Words",
+        "props": [
+            {
+                "p": "diffMode",
+                "v": "W",
+                "vt": "str"
+            },
+            {
+                "p": "oldText",
+                "v": "The grey fox  jumped over the yellow fence",
+                "vt": "str"
+            },
+            {
+                "p": "newText",
+                "v": "The Fox jumped high over the red fence",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "d59a78d98f3bb526"
+            ]
+        ]
+    },
+    {
+        "id": "0560530c98a6c957",
+        "type": "inject",
+        "z": "48d23d183a5c88eb",
+        "g": "dc9f2ed2556658f2",
+        "name": "Lines",
+        "props": [
+            {
+                "p": "diffMode",
+                "v": "L",
+                "vt": "str"
+            },
+            {
+                "p": "oldText",
+                "v": "'Line 1\\n\\nLine  2\\nline     3\\nLine       4'",
+                "vt": "jsonata"
+            },
+            {
+                "p": "newText",
+                "v": "'Line 1\\nline     3\\nLine 4\\nline  5'",
+                "vt": "jsonata"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "d59a78d98f3bb526"
+            ]
+        ]
+    },
+    {
+        "id": "ce0fa79785f8f770",
+        "type": "ui-template",
+        "z": "48d23d183a5c88eb",
+        "group": "8bd22dd1fce24d1d",
+        "page": "",
+        "ui": "",
+        "name": "Dashboard Form",
+        "order": 1,
+        "width": "11",
+        "height": "12",
+        "head": "",
+        "format": "<template>\n    <v-sheet class=\"rounded-xl ma-2\" height=\"350px\" width=\"1030px\" color=\"grey-lighten-3\" elevation=\"12\">\n    <div class=\"ml-8 mt-2 mb-n3\">\n        <h2 style=\"color:#6495ED\">Input Form</h2>\n    </div>\n    <v-container fluid class=\"ma-0\">\n        <v-row>\n            <v-col cols=\"auto\" class=\"mx-1\">\n                <v-textarea label=\"Old Text Block\" clearable rows=\"7\" width=\"470\" v-model=\"oldText\" maxlength=\"1000\"></v-textarea>\n            </v-col>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-textarea label=\"New Text Block\" clearable rows=\"7\" width=\"470\" v-model=\"newText\" maxlength=\"1000\"></v-textarea>\n            </v-col>\n        </v-row>\n        <v-row>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-checkbox class=\"mx-2\" v-model=\"caseSensitive\" label=\"Case Sensitive\"></v-checkbox>\n            </v-col>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-checkbox class=\"mx-2\" v-model=\"ignoreWS\" label=\"Ignore White Spaces\"></v-checkbox>\n            </v-col>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-btn style=\"margin-left:10px\" @click=\"onSubmit('L')\">Compare by Line</v-btn>\n                <v-btn style=\"margin-left:10px\" @click=\"onSubmit('W')\">Compare by Word</v-btn>\n                <v-btn style=\"margin-left:10px\" @click=\"onSubmit('C')\">Compare by Char</v-btn>\n            </v-col>\n        </v-row>\n    </v-container>\n    <div class=\"ml-8 mt-2\">\n        <h2 style=\"color:#6495ED\">Diff Results</h2>\n    </div>\n    <div class=\"ml-6\" style=\"border: 1px solid black;width:980px; max-height:250px; overflow-y: auto;\" v-if=\"isTblVisible\">\n        <v-data-table\n            :headers=\"headers\"\n            :items=\"items\"\n            :items-per-page=\"-1\"\n            :row-props=\"rowProps\"\n            hide-default-footer\n            density=\"compact\">\n        </v-data-table>\n    </div>\n\n    <div class=\"ml-6 pa-4\" style=\"border: 1px solid black; width:960px; height:250px;font-size:170%\" v-if=\"!isTblVisible\">\n        <v-text v-html=\"diffWordResult\"></v-text>\n    </div>\n    </v-sheet>\n    </template>\n<script type=\"text/javascript\">\n\nexport default {\n/***********************************************************************************************/\n// Data\n/***********************************************************************************************/\ndata () {\n    return {\n        oldText:\"\",\n        newText:\"\",\n        caseSensitive:false,\n        ignoreWS: true,\n        isTblVisible: false,\n        diffWordResult:\"\", //'<span style=\"color: red;\">red</span><span style=\"color: blue;\">blue</span>',\n\n        headers: [\n            { title: 'Diff', key:'diffType',align:'center',width:'100px',headerProps: {class:'header-style' }},\n            { title: 'Old Line #',key:'oldIndex',align:'center',width:'80px',headerProps: {class:'header-style'} },\n            { title: 'New Line #',key:'newIndex',align:'center',width:'80px',headerProps: {class:'header-style'} },\n            { title: 'Old Line',key:'oldLine',align:'left',width:'280px',headerProps: {class:'header-style'} },\n            { title: 'New Line',key:'newLine',align:'left',width:'280px',headerProps: {class:'header-style'} }        \n        ],\n        items: []\n    }\n},\n/***********************************************************************************************/\n// Mounted\n/***********************************************************************************************/\nmounted() {\n    const vThis = this; // save current 'this', for use inside callbacks & function properties\n\n     // Set Socket listener\n    this.$socket.on('msg-input:' + this.id, function(msg)\n    {\n        if (!msg || (msg.hasOwnProperty(\"_client\") && msg._client.socketId !== vThis.$socket.id ))\n        return;\n        \n        vThis.processMsg(msg);\n    });\n},\n/***********************************************************************************************/\n// Methods\n/***********************************************************************************************/\nmethods: {\n    //tst: function(msg){console.log(\"msg is here\",msg)},\n    //--------------------------------------------------------------------------------------------\n    onSubmit: function(mode) {\n        const msg = {\n            diffMode:mode,\n            ignoreWS:this.ignoreWS,\n            caseSensitive:this.caseSensitive,\n            oldText:this.oldText,\n            newText:this.newText\n        }\n        this.send(msg);\n    },\n    rowProps: function(data) {\n        let bgColor = '';\n        \n        if (data.item.diffType === \"added\")\n            bgColor = 'lightgreen';\n        else if (data.item.diffType ===\"removed\")\n            bgColor='lightpink';\n        return {style: {backgroundColor: bgColor}}; \n    },\n    processMsg: function (msg)  {\n        //console.log(\"processing msg\",msg);\n        switch(msg.diffMode)\n        {\n            case 'L':\n                this.diffWordResult = \"\";\n                this.isTblVisible = true;\n                this.items = msg.payload;\n                break;\n            case 'W':\n            case 'C':\n                this.diffWordResult = msg.payload;\n                this.isTblVisible = false;\n                this.items = [];\n                break;\n        }\n    }\n} // methods\n} // export default\n</script>\n<style>\n.header-style {\n    background-color: lightgrey;\n    color: black;\n    font-size: 14px;\n    font-weight: bold !important;\n}\n/*\n<template>\n  <v-data-table\n    :headers=\"headers\"\n    :items=\"items\"\n    class=\"column-bordered\"\n  />\n</template>\n\n<style scoped>\n.column-bordered td,\n.column-bordered th {\n  border-right: 1px solid #ccc;\n}\n\n.column-bordered th:last-child,\n.column-bordered td:last-child {\n  border-right: none;\n}\n*/\n</style>\n",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 170,
+        "y": 60,
+        "wires": [
+            [
+                "d59a78d98f3bb526"
+            ]
+        ]
+    },
+    {
+        "id": "05c6c9a2c74b0e76",
+        "type": "link out",
+        "z": "48d23d183a5c88eb",
+        "name": "update dashboard",
+        "mode": "link",
+        "links": [
+            "915fd631bce243a3"
+        ],
+        "x": 730,
+        "y": 200,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "915fd631bce243a3",
+        "type": "link in",
+        "z": "48d23d183a5c88eb",
+        "name": "Form",
+        "links": [
+            "05c6c9a2c74b0e76"
+        ],
+        "x": 45,
+        "y": 60,
+        "wires": [
+            [
+                "ce0fa79785f8f770"
+            ]
+        ]
+    },
+    {
+        "id": "a9088564c77bbe73",
+        "type": "inject",
+        "z": "48d23d183a5c88eb",
+        "g": "dc9f2ed2556658f2",
+        "name": "Chars",
+        "props": [
+            {
+                "p": "diffMode",
+                "v": "C",
+                "vt": "str"
+            },
+            {
+                "p": "oldText",
+                "v": "ABCD EFG",
+                "vt": "str"
+            },
+            {
+                "p": "newText",
+                "v": "abCxxEHIJ",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "d59a78d98f3bb526"
+            ]
+        ]
+    },
+    {
+        "id": "d59a78d98f3bb526",
+        "type": "Omrid01_textDiff",
+        "z": "48d23d183a5c88eb",
+        "name": "",
+        "diffMode": "L",
+        "caseSensitive": false,
+        "ignoreWS": true,
+        "x": 360,
+        "y": 200,
+        "wires": [
+            [
+                "76377f4edf6c9de2",
+                "7686820782e9be0d"
+            ]
+        ]
+    },
+    {
+        "id": "96db2d2ae1534340",
+        "type": "ui-template",
+        "z": "48d23d183a5c88eb",
+        "d": true,
+        "group": "",
+        "page": "",
+        "ui": "",
+        "name": "Dashboard Form-old",
+        "order": 2,
+        "width": "19",
+        "height": 14,
+        "head": "",
+        "format": "<template>\n    <v-sheet class=\"rounded-xl ma-2\" height=\"350px\" width=\"1030px\" color=\"grey-lighten-3\" elevation=\"12\">\n    <div class=\"ml-8 mt-2 mb-n3\">\n        <h2 style=\"color:#6495ED\">Input Form</h2>\n    </div>\n    <v-container fluid class=\"ma-0\">\n        <v-row>\n            <v-col cols=\"auto\" class=\"mx-1\">\n                <v-textarea label=\"Old Text Block\" clearable rows=\"7\" width=\"470\" v-model=\"oldText\" maxlength=\"1000\"></v-textarea>\n            </v-col>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-textarea label=\"New Text Block\" clearable rows=\"7\" width=\"470\" v-model=\"newText\" maxlength=\"1000\"></v-textarea>\n            </v-col>\n        </v-row>\n        <v-row>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-checkbox class=\"mx-2\" v-model=\"caseSensitive\" label=\"Case Sensitive\"></v-checkbox>\n            </v-col>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-checkbox class=\"mx-2\" v-model=\"ignoreWS\" label=\"Ignore White Spaces\"></v-checkbox>\n            </v-col>\n            <v-col cols=\"auto\" class=\"mx-2\">\n                <v-btn style=\"margin-left:10px\" @click=\"onSubmit('L')\">Compare by Line</v-btn>\n                <v-btn style=\"margin-left:10px\" @click=\"onSubmit('W')\">Compare by Word</v-btn>\n                <v-btn style=\"margin-left:10px\" @click=\"onSubmit('C')\">Compare by Char</v-btn>\n            </v-col>\n        </v-row>\n    </v-container>\n    <div class=\"ml-8 mt-2\">\n        <h2 style=\"color:#6495ED\">Diff Results by Line</h2>\n    </div>\n    <div class=\"ml-6\" style=\"width:980px; height:200px;\">\n    <!--    <h3 style=\"margin-bottom:10px;\">Diff Results by Lines</h3> -->\n        <div id=\"diffGrid\" style=\"max-width:960px\"></div>\n    </div>\n    <div class=\"ml-8 mt-4\">\n        <h2 style=\"color:#6495ED\">Diff Results by Word</h2>\n    </div>\n    <div class=\"ml-6 pa-4\" style=\"border: 1px solid black; width:960px; height:150px;font-size:170%\">\n        <v-text v-html=\"diffWordResult\"></v-text>\n    </div>\n    </v-sheet>\n\n    <link href=\"/NR_WebRoot/tabulator-tables/dist/css/tabulator.min.css\" rel=\"stylesheet\">\n</template>\n<script type=\"text/javascript\" src=\"/NR_WebRoot/tabulator-tables/dist/js/tabulator.min.js\"></script>\n\n<script type=\"text/javascript\">\n\nexport default {\n/***********************************************************************************************/\n// Data\n/***********************************************************************************************/\ndata () {\n\nconst oldTestWords = \"The grey fox jumped over the yellow fence\";\nconst newTestWords = \"The Fox jumped high over the red fence\";\nconst oldTestLines = `Line 1\nLine 2\nline 3\nLine 4`;\nconst newTestLines = `Line    1\nLINE 3\nLine        4\nline 5`;\nconst oldTestChars = \"AbC DEF\";\nconst newTestChars = \"ABCDFXX\";\n\n    return {\n        //oldText:oldTestWords,\n        //oldText:oldTestLines,\n        //oldText:oldTestChars,\n        oldText:\"\",\n\n        //newText:newTestWords,\n        //newText:newTestLines,\n        //newText:newTestChars,\n        newText:\"\",\n\n        caseSensitive:false,\n        ignoreWS: true,\n        grid: null,\n        diffWordResult:\"\" //'<span style=\"color: red;\">red</span><span style=\"color: blue;\">blue</span>'\n    }\n},\n/***********************************************************************************************/\n// Mounted\n/***********************************************************************************************/\nmounted() {\n    const vThis = this; // save current 'this', for use inside callbacks & function properties\n\n    // load the Tabulator grid\n    this.loadTabulator(); // runs async\n\n     // Set Socket listener\n    this.$socket.on('msg-input:' + this.id, function(msg)\n    {\n        if (!msg || (msg.hasOwnProperty(\"_client\") && msg._client.socketId !== vThis.$socket.id ))\n        return;\n        \n        vThis.processMsg(msg);\n        //vThis.tst(msg);\n    });\n},\n/***********************************************************************************************/\n// Methods\n/***********************************************************************************************/\nmethods: {\n    //tst: function(msg){console.log(\"msg is here\",msg)},\n    //--------------------------------------------------------------------------------------------\n    onSubmit: function(mode) {\n        const msg = {\n            diffMode:mode,\n            ignoreWS:this.ignoreWS,\n            caseSensitive:this.caseSensitive,\n            oldText:this.oldText,\n            newText:this.newText\n        }\n        this.send(msg);\n\n        //console.log(`comparing ${this.oldText} to ${this.newText}, mode=${this.diffMode}, CS=${this.caseSensitive} IWS=${this.ignoreWS}`);\n        //this.diffWordResult = 'Now it is <span style=\"color: green;\">green</span>'\n    },\n    onSelectMode: function () {\n        //console.log(\"Mode selected: \",this.diffMode);\n    return;\n    },\n    /*\n    rowProps: function (data) {\n        //console.log(\"In rowProps, data=\",data);\n        return {\n            class: {\n                'diffAdded': data.item.diffType === 'added',\n                'diffRemoved': data.item.diffType === 'removed'\n            }\n        }\n    },\n    */\n    loadTabulator:  async function()\n    {\n        function delay(ms) {return new Promise(resolve => setTimeout(resolve, ms));}\n        \n        const loopCount = 50;\n        for (let i = 0; i < loopCount; i++)\n        {\n            if (typeof Tabulator===\"function\") // i.e. Tabulator import script finished loading\n            {\n                this.createGrid();\n                return;\n            }\n            else\n                if (i === (loopCount-1))\n                {\n                    console.log(\"Failed to load Tabulator, count=\",i+1);\n                    alert(\" Failed to Load the Tabulator library\");\n                }\n                else\n                    await delay(100);\n        }\n    },\n    createGrid: function ()\n    {\n        const gridCfg = {\n            height: 200,layout: \"fitColumns\",\n            columns: [\n                {field:\"id\",visible:false},\n                {field: \"diffType\",title: \"Diff Type\",width: 120,hozAlign: \"left\"},\n                {field: \"oldIndex\",title: \"Old Line #\",width:120,hozAlign:\"center\"},\n                {field: \"newIndex\",title: \"New Line #\",width:120,hozAlign:\"center\"},\n                {field: \"oldStr\",title: \"Old Line\",width:280,hozAlign:\"left\"},\n                {field: \"newStr\",title: \"New Line\",hozAlign:\"left\"}\n            ],\n            rowFormatter: function(row) {\n                const rowData = row.getData();\n                const rowStyle = row.getElement().style;\n                rowStyle.fontSize = \"18px\";\n\n                const diffType = rowData.diffType;\n                switch (diffType)\n                {\n                    case \"added\":\n                        rowStyle.backgroundColor = \"lightgreen\";\n                        break;\n                    case \"removed\":\n                        rowStyle.backgroundColor = \"lightpink\";\n                        break;                        \n                }\n            }\n            /* ,data:[\n                {id:1, diffType:\"match\",oldIndex:1,newIndex:2,oldStr:\"Old line 1\",newStr:\"New Line 1\"},\n                {id:2, diffType:\"added\",oldIndex:1,newIndex:2,oldStr:\"Old line 2\",newStr:\"New Line 2\"},\n                {id:3, diffType:\"removed\",oldIndex:1,newIndex:2,oldStr:\"Old line 3\",newStr:\"New Line 3\"}\n            ]*/\n        }\n        try {\n            this.grid = new Tabulator(\"#diffGrid\",gridCfg);\n            this.grid.on(\"tableBuilt\", function() {\n                //this.gridReady = true;\n                console.log(\"Grid is ready\");\n            });\n        }\n        catch (err) {\n            console.error(\"Grid creationn failed:\",err);\n            alert(\"Grid creationn failed:\",err);\n        }\n    },\n    processMsg: function (msg)\n    {\n        //console.log(\"processing msg\",msg);\n        switch(msg.diffMode)\n        {\n            case 'L':\n                this.diffWordResult = \"\";\n                this.grid.setData(msg.payload);\n                break;\n            case 'W':\n            case 'C':\n                this.grid.clearData();\n                this.diffWordResult = msg.payload;\n                break;\n        }\n    }\n} // methods\n} // export default\n</script>\n",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 160,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    }
+]
